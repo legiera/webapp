@@ -1,0 +1,463 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+
+
+
+
+            <h2 id="nav-tabs">Wyniki</h2>
+            <div class="bs-component">
+              <ul class="nav nav-tabs">
+                <li class="active"><a href="#home" data-toggle="tab">O analizie</a></li>
+                <li><a href="#profile" data-toggle="tab">Sporty</a></li>
+                <li><a href="#profile1" data-toggle="tab">Aplikacje</a></li>
+                <li><a href="#profile3" data-toggle="tab">Urządzenia</a></li>
+              </ul>
+              <div id="myTabContent" class="tab-content">
+                <div class="tab-pane fade" id="home">
+                    <p><br/><div class="jumbotron"><h3>Jak przebiegało badanie? </h3><br/> Badanie rynku aplikacji sportowych zostało przeprowadzone wśród użytkowników Twittera przy użyciu wykonanego przez nasz zespół crawlera. Na podstawie częstości pojawiania się hashtagów zawierających wybrany rodzaj sportu, nazwę aplikacji lub urządzenia określano ich popularność wśród społeczeństwa. Analizowane dane zostały pobrane z okresu trzech tygodni.
+                </div></p>
+                </div>
+                <div class="tab-pane fade active in" id="profile1">
+                    <p><br/>
+                        <div class="jumbotron">Poniższy wykres przedstawia popularność różnych aplikacji dedykowanych dla osób uprawiających sport, dokonujących pomiarów wykonanej aktywności fizycznej w różnych dziedzinach sportów.<br/><br/>
+                    Przeprowadzone badanie wykazało, że aplikacją cieszącą się największym zainteresowaniem wśród osób uprawiających sport jest Endomondo?. Jej popularność wynika najprawdopodobniej z uniwersalności i możliwości wykorzystania w trakcie wykonywania niemal każdego rodzaju aktywności fizycznej. Pozwala to wysnuć wniosek, że im szersze zastosowanie danej aplikacji tym większe posiada ona grono odbiorców. Najmniejszym zainteresowaniem cieszą się więc aplikacje o ograniczonej uniwersalności i dotyczące mało popularnych sportów.
+                </div>
+                    </p>
+                    <div id="donutchart" style="width: 900px; height: 500px;"></div>
+                      <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+                      <script type="text/javascript">
+                        google.charts.load("current", {packages:["corechart"]});
+                        google.charts.setOnLoadCallback(drawChart);
+                        function drawChart() {
+                          var data = google.visualization.arrayToDataTable([
+                            ['Task', 'Hours per Day'],
+                            ['Daily Yoga App',     10],
+                            ['MyFitnessPal',      20],
+                            ['Endomondo',  52],
+                            ['Runtastic App', 20],
+                            ['Mi Band Master',    5],
+                              ['Strava cycling',    50],
+                              ['Pedometer',    15]
+                          ]);
+
+                          var options = {
+                            title: 'Aplikacje mobilne',
+                            pieHole: 0.4,
+                            backgroundColor: { fill:'transparent' },
+                            legendTextStyle: { color: 'white' },
+                            titleTextStyle: { color: 'white' },
+                          };
+
+                          var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+                          chart.draw(data, options);
+                        }
+                      </script>
+                </div>
+                <div class="tab-pane fade" id="profile">
+                    <p><br/><div class="jumbotron">Poniżej przedstawione wyniki przedstawiają zależność popularności poszczególnych rodzajów sportów wśród użytkowników Twittera oraz dnia, w którym najchętniej uprawiają oni aktywność fizyczną. Do analizy wybrano szczęść najbardziej popularnych sportów indywidualnych.
+                      <br/><br/>Na podstawie otrzymanych wyników można stwierdzić, że najczęściej wybieranym przez użytkowników Twittera sportem jest bieganie, które uprawia około 38% wszystkich osób aktywnych fizycznie. O popularności biegania może decydować możliwość uprawiania tego sportu w niemal każdych warunkach i brak konieczności zakupu profesjonalnego sprzętu. Ponadto, największa aktywność fizyczna została odnotowana dla poniedziałku i piątku. Największa motywacja do ćwiczeń w te dni może wynikać z jednej strony z większej ilości wolnego czasu (piątek), jak i chęci poprawienia formy zaniedbanej w weekend (poniedziałek). Co ciekawe, to właśnie sobota i niedziela są dniami, w których popularność hashtagów związanych ze sportem jest najmniejsza.
+                </div></p>
+                  <br/>
+                  <style>
+                      .dimple-custom-axis-label {
+                          font: 14px sans-serif;
+                      }
+                      .text.dimple-custom-axis-label {
+                          font: 14px;
+                      }
+                  body{
+                      width:1060px;
+                      margin:50px auto;
+                  }
+                  path {  stroke: #fff; }
+                  path:hover {  opacity:0.9; }
+                  rect:hover {  fill:blue; }
+                  .axis {  font: 10px sans-serif; }
+                  .legend tr{    border-bottom:1px solid grey; }
+                  .legend tr:first-child{    border-top:1px solid grey; }
+
+                  .axis path,
+                  .axis line {
+                    fill: none;
+                    stroke: #000;
+                    shape-rendering: crispEdges;
+                  }
+
+                  .x.axis path {  display: none; }
+                  .legend{
+                      margin-bottom:76px;
+                      display:inline-block;
+                      border-collapse: collapse;
+                      border-spacing: 0px;
+                  }
+                  .legend td{
+                      padding:4px 5px;
+                      vertical-align:bottom;
+                  }
+                  .legendFreq, .legendPerc{
+                      align:right;
+                      width:50px;
+
+                      #chartContainer {
+                          font-size: 40px;
+                      }
+                  }
+
+                  </style>
+                  <div id='dashboard'>
+                  </div>
+                  <script src="http://d3js.org/d3.v3.min.js"></script>
+                  <script>
+                  function dashboard(id, fData){
+                      var barColor = 'steelblue';
+                      function segColor(c){ return {bieganie:"#807dba", pływanie:"#e08214",rolki:"#41ab5d", yoga:"red", zumba:"blue", aerobik:"orange"}[c]; }
+
+                      // compute total for each state.
+                      fData.forEach(function(d){d.total=d.freq.bieganie+d.freq.pływanie+d.freq.rolki+d.freq.yoga+d.freq.zumba+d.freq.aerobik;});
+
+                      // function to handle histogram.
+                      function histoGram(fD){
+                          var hG={},    hGDim = {t: 60, r: 0, b: 30, l: 0};
+                          hGDim.w = 500 - hGDim.l - hGDim.r,
+                          hGDim.h = 300 - hGDim.t - hGDim.b;
+
+                          //create svg for histogram.
+                          var hGsvg = d3.select(id).append("svg")
+                              .attr("width", hGDim.w + hGDim.l + hGDim.r)
+                              .attr("height", hGDim.h + hGDim.t + hGDim.b).append("g")
+                              .attr("transform", "translate(" + hGDim.l + "," + hGDim.t + ")");
+
+                          // create function for x-axis mapping.
+                          var x = d3.scale.ordinal().rangeRoundBands([0, hGDim.w], 0.1)
+                                  .domain(fD.map(function(d) { return d[0]; }));
+
+                          // Add x-axis to the histogram svg.
+                          hGsvg.append("g").attr("class", "x axis")
+                              .attr("transform", "translate(0," + hGDim.h + ")")
+                              .call(d3.svg.axis().scale(x).orient("bottom"));
+
+                          // Create function for y-axis map.
+                          var y = d3.scale.linear().range([hGDim.h, 0])
+                                  .domain([0, d3.max(fD, function(d) { return d[1]; })]);
+
+                          // Create bars for histogram to contain rectangles and freq labels.
+                          var bars = hGsvg.selectAll(".bar").data(fD).enter()
+                                  .append("g").attr("class", "bar");
+
+                          //create the rectangles.
+                          bars.append("rect")
+                              .attr("x", function(d) { return x(d[0]); })
+                              .attr("y", function(d) { return y(d[1]); })
+                              .attr("width", x.rangeBand())
+                              .attr("height", function(d) { return hGDim.h - y(d[1]); })
+                              .attr('fill',barColor)
+                              .on("mouseover",mouseover)// mouseover is defined below.
+                              .on("mouseout",mouseout);// mouseout is defined below.
+
+                          //Create the frequency labels above the rectangles.
+                          bars.append("text").text(function(d){ return d3.format(",")(d[1])})
+                              .attr("x", function(d) { return x(d[0])+x.rangeBand()/2; })
+                              .attr("y", function(d) { return y(d[1])-5; })
+                              .attr("text-anchor", "middle");
+
+                          function mouseover(d){  // utility function to be called on mouseover.
+                              // filter for selected state.
+                              var st = fData.filter(function(s){ return s.State == d[0];})[0],
+                                  nD = d3.keys(st.freq).map(function(s){ return {type:s, freq:st.freq[s]};});
+
+                              // call update functions of pie-chart and legend.
+                              pC.update(nD);
+                              leg.update(nD);
+                          }
+
+                          function mouseout(d){    // utility function to be called on mouseout.
+                              // reset the pie-chart and legend.
+                              pC.update(tF);
+                              leg.update(tF);
+                          }
+
+                          // create function to update the bars. This will be used by pie-chart.
+                          hG.update = function(nD, color){
+                              // update the domain of the y-axis map to reflect change in frequencies.
+                              y.domain([0, d3.max(nD, function(d) { return d[1]; })]);
+
+                              // Attach the new data to the bars.
+                              var bars = hGsvg.selectAll(".bar").data(nD);
+
+                              // transition the height and color of rectangles.
+                              bars.select("rect").transition().duration(500)
+                                  .attr("y", function(d) {return y(d[1]); })
+                                  .attr("height", function(d) { return hGDim.h - y(d[1]); })
+                                  .attr("fill", color);
+
+                              // transition the frequency labels location and change value.
+                              bars.select("text").transition().duration(500)
+                                  .text(function(d){ return d3.format(",")(d[1])})
+                                  .attr("y", function(d) {return y(d[1])-5; });
+                          }
+                          return hG;
+                      }
+
+                      // function to handle pieChart.
+                      function pieChart(pD){
+                          var pC ={},    pieDim ={w:250, h: 250};
+                          pieDim.r = Math.min(pieDim.w, pieDim.h) / 2;
+
+                          // create svg for pie chart.
+                          var piesvg = d3.select(id).append("svg")
+                              .attr("width", pieDim.w).attr("height", pieDim.h).append("g")
+                              .attr("transform", "translate("+pieDim.w/2+","+pieDim.h/2+")");
+
+                          // create function to draw the arcs of the pie slices.
+                          var arc = d3.svg.arc().outerRadius(pieDim.r - 10).innerRadius(0);
+
+                          // create a function to compute the pie slice angles.
+                          var pie = d3.layout.pie().sort(null).value(function(d) { return d.freq; });
+
+                          // Draw the pie slices.
+                          piesvg.selectAll("path").data(pie(pD)).enter().append("path").attr("d", arc)
+                              .each(function(d) { this._current = d; })
+                              .style("fill", function(d) { return segColor(d.data.type); })
+                              .on("mouseover",mouseover).on("mouseout",mouseout);
+
+                          // create function to update pie-chart. This will be used by histogram.
+                          pC.update = function(nD){
+                              piesvg.selectAll("path").data(pie(nD)).transition().duration(500)
+                                  .attrTween("d", arcTween);
+                          }
+                          // Utility function to be called on mouseover a pie slice.
+                          function mouseover(d){
+                              // call the update function of histogram with new data.
+                              hG.update(fData.map(function(v){
+                                  return [v.State,v.freq[d.data.type]];}),segColor(d.data.type));
+                          }
+                          //Utility function to be called on mouseout a pie slice.
+                          function mouseout(d){
+                              // call the update function of histogram with all data.
+                              hG.update(fData.map(function(v){
+                                  return [v.State,v.total];}), barColor);
+                          }
+                          // Animating the pie-slice requiring a custom function which specifies
+                          // how the intermediate paths should be drawn.
+                          function arcTween(a) {
+                              var i = d3.interpolate(this._current, a);
+                              this._current = i(0);
+                              return function(t) { return arc(i(t));    };
+                          }
+                          return pC;
+                      }
+
+                      // function to handle legend.
+                      function legend(lD){
+                          var leg = {};
+
+                          // create table for legend.
+                          var legend = d3.select(id).append("table").attr('class','legend');
+
+                          // create one row per segment.
+                          var tr = legend.append("tbody").selectAll("tr").data(lD).enter().append("tr");
+
+                          // create the first column for each segment.
+                          tr.append("td").append("svg").attr("width", '16').attr("height", '16').append("rect")
+                              .attr("width", '16').attr("height", '16')
+                           .attr("fill",function(d){ return segColor(d.type); });
+
+                          // create the second column for each segment.
+                          tr.append("td").text(function(d){ return d.type;});
+
+                          // create the third column for each segment.
+                          tr.append("td").attr("class",'legendFreq')
+                              .text(function(d){ return d3.format(",")(d.freq);});
+
+                          // create the fourth column for each segment.
+                          tr.append("td").attr("class",'legendPerc')
+                              .text(function(d){ return getLegend(d,lD);});
+
+                          // Utility function to be used to update the legend.
+                          leg.update = function(nD){
+                              // update the data attached to the row elements.
+                              var l = legend.select("tbody").selectAll("tr").data(nD);
+
+                              // update the frequencies.
+                              l.select(".legendFreq").text(function(d){ return d3.format(",")(d.freq);});
+
+                              // update the percentage column.
+                              l.select(".legendPerc").text(function(d){ return getLegend(d,nD);});
+                          }
+
+                          function getLegend(d,aD){ // Utility function to compute percentage.
+                              return d3.format("%")(d.freq/d3.sum(aD.map(function(v){ return v.freq; })));
+                          }
+
+                          return leg;
+                      }
+
+                      // calculate total frequency by segment for all state.
+                      var tF = ['bieganie','pływanie','rolki','yoga','zumba','aerobik'].map(function(d){
+                          return {type:d, freq: d3.sum(fData.map(function(t){ return t.freq[d];}))};
+                      });
+
+                      // calculate total frequency by state for all segment.
+                      var sF = fData.map(function(d){return [d.State,d.total];});
+
+                      var hG = histoGram(sF), // create the histogram.
+                          pC = pieChart(tF), // create the pie-chart.
+                          leg= legend(tF);  // create the legend.
+                  }
+                  </script>
+
+                  <script>
+                  var freqData=[
+                  {State:'Poniedziałek',freq:{bieganie:4786, pływanie:1319, rolki:249, yoga:254, zumba:3500, aerobik:700}}
+                  ,{State:'Wtorek',freq:{bieganie:1101, pływanie:412, rolki:674, yoga:289, zumba: 1020, aerobik:400}}
+                  ,{State:'Środa',freq:{bieganie:932, pływanie:2149, rolki:418, yoga: 123, zumba: 500, aerobik: 350}}
+                  ,{State:'Czwartek',freq:{bieganie:832, pływanie:1152, rolki:1862, yoga:332, zumba: 200, aerobik: 250}}
+                  ,{State:'Piątek',freq:{bieganie:4481, pływanie:3304, rolki:448, yoga:564, zumba: 720, aerobik:480}}
+                  ,{State:'Sobota',freq:{bieganie:1619, pływanie:167, rolki:1063, yoga:129, zumba: 450, aerobik:230}}
+                  ,{State:'Niedziela',freq:{bieganie:1819, pływanie:247, rolki:1203, yoga:330, zumba:260, aerobik:100}}
+                  ];
+
+                  dashboard('#dashboard',freqData);
+                  </script>
+                      <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+                        
+    <div id="chart_div" style="width: 900px; height: 500px;"></div>
+
+                </div>
+                <div class="tab-pane fade" id="profile3">
+                  </br><div class="jumbotron">W tej części analizy poddano badaniu zależność popularności różnego rodzaju gadżetów sportowych w zależności od ich ceny. Są to w większości urządzenia monitorujące pracę organizmu w trakcie wysiłku fizycznego.</br></br>
+                    Otrzymane wyniki nie pozwalają na określenie zależności między ceną urządzenia a jego popularnością. Zarówno najdroższe urządzenie jak i te o niskiej cenie wzbudzają podobne zainteresowanie wśród osób aktywnych fizycznie. Na tej podstawie można stwierdzić, iż cena nie ma istotnego wpływu na wybór danego urządzenia przez konsumenta, a ich stosunkowo duża popularność wpływa pozytywnie na opłacalność inwestycji w nowe technologie z zakresu sportu i zdrowego stylu życia.
+                </div>
+                    </br></br>
+                <style>
+                    .dimple-axis dimple-title dimple-custom-axis-title dimple-axis-y {
+                        stroke: #000;
+                        stroke-opacity: .75;
+                    }
+                    .dimple-custom-axis-label {
+                        font-size: 14px;
+                    }
+                    .text.dimple-custom-axis-label {
+                        font-size: 14px;
+                    }
+                    .white {
+                        font-size: 14px;
+                    }
+                    #chartContainer {
+                        font-size: 20px;
+                    }
+                </style>
+                <div id="chartContainer">
+                  <script src="http://d3js.org/d3.v4.min.js"></script>
+                  <script src="http://dimplejs.org/dist/dimple.v2.3.0.min.js"></script>
+                  <script type="text/javascript">
+                    var svg = dimple.newSvg("#chartContainer", 800, 650)
+                    .style("font-size", "34px")
+                    .attr('class','white');  //590,450
+
+                    // The default data set for these examples has regular times
+                    // and the point of this demo is to show the time axis
+                    // functionality, therefore a small bespoke data set is used.
+                    data = [
+                      { "Urządzenie":"Pedometer","Cena $":25,"Value":6500 },
+                        {"Urządzenie":"Moov Now","Cena $":100,"Value":5730 },
+                      { "Urządzenie":"Resistance Bands","Cena $":10,"Value":1700 },
+                        {"Urządzenie":"Garmin Forerunner","Cena $":300,"Value":6560 },
+                      {"Urządzenie":"FitBit Flex","Cena $":60,"Value":10800 },
+                      { "Urządzenie":"Nike Fuel Band","Cena $":149,"Value":8630 },
+                    ];
+
+                    // Create Separate Date and Time, this allows us to draw them
+                    // on separate axes.  Despite the time axis only displaying
+                    // the time portion, the whole date is used so they need to
+                    // have the same date allocated
+                  //  data.forEach(function (d) {
+                    //    d["Day"] = d["Date"].substring(0, d["Date"].length - 6);
+                      //  d["Time of Day"] =
+                        //    "2000-01-01 " + d["Date"].substring(d["Date"].length - 5);
+                    // }, this);
+
+                    // Create the chart as usual
+                    var myChart = new dimple.chart(svg, data);
+                    myChart.setBounds(70, 40, 490, 320)
+
+
+                    // Add the x axis reading dates in the format 01 Jan 2012
+                    // and displaying them 01 Jan
+                    var x = myChart.addCategoryAxis("x", "Urządzenie");
+
+                    // Add the y axis reading dates and times but only outputting
+                    // times.
+                    var y = myChart.addMeasureAxis("y", "Cena $");
+
+                 // Add the X Axis
+                  svg.append("x")
+                      .attr("class", "axis");
+                 //     .attr("transform", "translate(0," + height + ")")
+                   //   .call(d3.axisBottom(x));
+
+                  // Add the Y Axis
+                  svg.append("y")
+                      .attr("class", "axis");
+                  //    .call(d3.axisLeft(y));
+
+                    // Size the bubbles by volume
+                    var z = myChart.addMeasureAxis("z", "Value");
+
+                    // Setting min and max dates requires them to be set
+                    // as actual javascript date objects
+                  //  x.overrideMin = new Date("2010-06-20");
+                   // x.overrideMax = new Date("2011-01-02");
+                   // y.overrideMin = new Date("01/01/2000 9:00 am");
+                   // y.overrideMax = new Date("01/01/2000 6:00 pm");
+
+                    // Show a label for every 4 weeks.
+                 //   x.timePeriod = d3.timeWeek;
+                  //  x.timeInterval = 4;
+
+                    // Control bubble sizes by setting the max and min values
+                    z.overrideMin = 100;   //900
+                    z.overrideMax = 10000; //3000
+
+                    // Add the bubble series for shift values first so that it is
+                    // drawn behind the lines
+                    myChart.addSeries("Popularność", dimple.plot.bubble);
+
+                    // Add the line series on top of the bubbles.  The bubbles
+                    // and line points will naturally fall in the same places
+                    var s = myChart.addSeries("Popularność");
+
+                    // Add line markers to the line because it looks nice
+                    s.lineMarkers = true;
+
+                    // Show a legend
+                    myChart.addLegend(180, 10, 360, 20, "right");
+
+
+
+                svg.select(".x.axis")
+                 // .selectAll("text")
+                    .style("font-size","40px");
+
+                    // Draw everything
+                    myChart.draw();
+
+
+
+                  </script>
+                </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-5">
+          <div/>
+
+
+
+
+
+
+{% endblock %}
